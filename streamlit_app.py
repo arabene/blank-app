@@ -1,37 +1,30 @@
 
 import streamlit as st
 
-# --- 사이드바 (슬라이더) ---
-st.sidebar.title("슬라이더")
-slider_val = st.sidebar.slider("값 선택", 0, 100, 50)
-
-# --- 탭 구성 ---
-tab1, tab2, tab3 = st.tabs(["탭 01", "탭 02", "탭 03"])
-
-with tab1:
-    st.write("탭 01 내용")
-
-    # 2x2 레이아웃 구성
-    col1, col2 = st.columns(2)
-    with col1:
-        st.markdown("### 🧱 레이아웃 01")
-        st.info(f"슬라이더 값: {slider_val}")
-    with col2:
-        st.markdown("### 🧱 레이아웃 02")
-        st.success("오른쪽 상단 영역")
-
-    col3, col4 = st.columns(2)
-    with col3:
-        st.markdown("### 🧱 레이아웃 03")
-        st.warning("왼쪽 하단 영역")
-    with col4:
-        st.markdown("### 🧱 레이아웃 04")
-        st.error("오른쪽 하단 영역")
-
-with tab2:
-    st.write("탭 02 내용")
-
-with tab3:
-    st.write("탭 03 내용")
+import streamlit as st
+from streamlit_folium import folium_static
+import folium
+from folium.plugins import MarkerCluster
+import pandas as pd
 
 
+st.title("진주시 CCTV 현황")
+
+df = pd.read_csv("/workspaces/blank-app/jinju_cctv_20250513.csv", encoding='euc-kr')
+
+st.dataframe(df, height=200)
+
+df[["lat","lon"]] = df[["위도","경도"]]
+
+m = folium.Map(location=[35.1799817, 128.1076213], zoom_start=13)
+
+marker_cluster = MarkerCluster().add_to(m)
+
+for idx, row in df.iterrows():
+    folium.Marker(
+        location=[row["lat"], row["lon"]],
+        popup=row["설치장소"],
+        icon=folium.Icon(color="blue", icon="info-sign"),
+    ).add_to(marker_cluster)
+
+folium_static(m)
