@@ -8,7 +8,7 @@ from folium.plugins import MarkerCluster
 import pandas as pd
 
 
-st.title("진주시 CCTV 현황")
+st.title("진주시 CCTV 현황2")
 
 df = pd.read_csv("/workspaces/blank-app/jinju_cctv_20250513.csv", encoding='euc-kr')
 
